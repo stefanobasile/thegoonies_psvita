@@ -88,7 +88,8 @@ int G_interface::update_state(int mousex,int mousey,int button,int button_status
 				 e=m_elements[pos];
 			 } while(!e->m_active);
 
-			 SDL_WarpMouse(int(e->m_x+e->m_dx/2),int(e->m_y+e->m_dy/2));
+// FIXME
+//			 SDL_WarpMouse(int(e->m_x+e->m_dx/2),int(e->m_y+e->m_dy/2));
 		} // if
 	} // if
 

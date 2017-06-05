@@ -29,7 +29,8 @@ bool Sound_initialization(void)
 
 int Sound_initialization(int nc, int nrc)
 {
-    char SoundcardName[256];
+// MIGRATION
+//    char SoundcardName[256];
     int audio_rate = 44100;
     int audio_channels = 2;
     int audio_bufsize = AUDIO_BUFFER;
@@ -54,12 +55,14 @@ int Sound_initialization(int nc, int nrc)
         return -1;
     }
 	
-    SDL_AudioDriverName(SoundcardName, sizeof(SoundcardName));
+// MIGRATION
+//    SDL_AudioDriverName(SoundcardName, sizeof(SoundcardName));
     Mix_QuerySpec (&audio_rate, &audio_format, &audio_channels);
 #ifdef __DEBUG_MESSAGES
 
+// MIGRATION
     output_debug_message("    Opened %s at %d Hz %d bit %s, %d bytes audio buffer\n",
-                         SoundcardName, audio_rate, audio_format & 0xFF,
+                         "MIGRATION - no name", audio_rate, audio_format & 0xFF,
                          audio_channels > 1 ? "stereo" : "mono", audio_bufsize);
 #endif
 

@@ -189,21 +189,21 @@ bool G_TextInput::check_status(int mousex,int mousey,int button,int button_statu
         int i;
         char characters[] = "1234567890qwertyuiopasdfghjklzxcvbnmñ!%?,.-;: ";
 
-		SDL_keysym *ke;
+		SDL_Keysym *ke;
 
 		while(!k->keyevents.EmptyP()) {
 			ke=k->keyevents.ExtractIni();
-			if (ke->unicode>=0x20 && ke->unicode<=0x7E && int(strlen(m_editing))<m_max_length) {
+			if (ke->sym>=0x20 && ke->sym<=0x7E && int(strlen(m_editing))<m_max_length) {
 				i=0;
-				while(characters[i]!=ke->unicode && characters[i]!=0) i++;
+				while(characters[i]!=ke->sym && characters[i]!=0) i++;
 
 				if (characters[i]!=0) {
 					if (m_editing_position<strlen(m_editing)) {
 						for(unsigned int i=strlen(m_editing)+1;i>m_editing_position;i--) m_editing[i]=m_editing[i-1];
-						m_editing[m_editing_position]=(char)ke->unicode;
+						m_editing[m_editing_position]=(char)ke->sym;
 						m_editing_position++;
 					} else {
-						m_editing[m_editing_position]=(char)ke->unicode;
+						m_editing[m_editing_position]=(char)ke->sym;
 						m_editing_position++;
 						m_editing[m_editing_position]=0;
 					} /* if */

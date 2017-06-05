@@ -32,7 +32,9 @@ KEYBOARDSTATE::KEYBOARDSTATE(void)
         joysticks = 0;
     } /* if */ 
 
-    k_size = SDLK_LAST + n_joysticks * JOYSTICK_SIZE;
+// MIGRATION
+//    k_size = SDLK_LAST + n_joysticks * JOYSTICK_SIZE;
+    k_size = SDL_NUM_SCANCODES + n_joysticks * JOYSTICK_SIZE;
     joystick_0_pos = 0; //SDLK_LAST;
     joystick_size = JOYSTICK_SIZE;
 
@@ -69,10 +71,14 @@ KEYBOARDSTATE::~KEYBOARDSTATE(void)
 void KEYBOARDSTATE::cycle(void)
 {
     int i, j, v;
-    unsigned char *k = (unsigned char *)SDL_GetKeyState(NULL);
+// MIGRATION
+//    unsigned char *k = (unsigned char *)SDL_GetKeyState(NULL);
+    unsigned char *k = (unsigned char *)SDL_GetKeyboardState(NULL);
 
     /* Update keyboard: */
-    for (i = 0;i < SDLK_LAST; i++) {
+// MIGRATION
+//    for (i = 0;i < SDLK_LAST; i++) {
+    for (i = 0;i < SDL_NUM_SCANCODES; i++) {
         old_keyboard[i] = keyboard[i];
         keyboard[i] = k[i];
 		if (!k[i]) time_pressed[i]=0;
@@ -130,8 +136,8 @@ void KEYBOARDSTATE::cycle(void)
 void KEYBOARDSTATE::copy(KEYBOARDSTATE *lvk)
 {
     int i;
-    List<SDL_keysym> l;
-    SDL_keysym *ks, *ks2;
+    List<SDL_Keysym> l;
+    SDL_Keysym *ks, *ks2;
 
     LVK_ID = lvk->LVK_ID;
     for (i = 0;i < k_size && i < lvk->k_size; i++) {
@@ -142,10 +148,11 @@ void KEYBOARDSTATE::copy(KEYBOARDSTATE *lvk)
     l.Instance(lvk->keyevents);
     l.Rewind();
     while (l.Iterate(ks)) {
-        ks2 = new SDL_keysym;
+        ks2 = new SDL_Keysym;
         ks2->scancode = ks->scancode;
         ks2->sym = ks->sym;
-        ks2->unicode = ks->unicode;
+        ks2->unused = ks->unused;
+//        ks2->unicode = ks->unicode;
         ks2->mod = ks->mod;
         keyevents.Add(ks2);
     }
@@ -154,8 +161,8 @@ void KEYBOARDSTATE::copy(KEYBOARDSTATE *lvk)
 bool KEYBOARDSTATE::save(FILE *fp)
 {
     int i;
-    List<SDL_keysym> l;
-    SDL_keysym *ks;
+    List<SDL_Keysym> l;
+    SDL_Keysym *ks;
 
     fprintf(fp, "%i %i %i %i\n", n_joysticks, k_size, joystick_0_pos, joystick_size);
 
@@ -170,7 +177,7 @@ bool KEYBOARDSTATE::save(FILE *fp)
     l.Instance(keyevents);
     l.Rewind();
     while (l.Iterate(ks)) {
-        fprintf(fp, "%i %i %i %i\n", int(ks->scancode), int(ks->sym), int(ks->unicode), int(ks->mod));
+        fprintf(fp, "%i %i %i %i\n", int(ks->scancode), int(ks->sym), int(ks->unused), int(ks->mod));
     }
     return true;
 }
@@ -178,7 +185,7 @@ bool KEYBOARDSTATE::save(FILE *fp)
 bool KEYBOARDSTATE::load(FILE *fp)
 {
     int i, j, k, l, m, n;
-    SDL_keysym *ks;
+    SDL_Keysym *ks;
     char tmp[32];
 
     if (4 != fscanf(fp, "%i %i %i %i", &n_joysticks, &k_size, &joystick_0_pos, &joystick_size)) {
@@ -209,14 +216,15 @@ bool KEYBOARDSTATE::load(FILE *fp)
                 return false;
             }
             for (j = 0; j < i; j++) {
-                ks = new SDL_keysym();
+                ks = new SDL_Keysym();
                 if (4 != fscanf(fp, "%i %i %i %i", &k, &l, &m, &n)) {
                     return false;
                 }
-                ks->scancode = k;
-                ks->sym = (SDLKey)l;
-                ks->unicode = m;
-                ks->mod = (SDLMod)n;
+// MIGRATION
+                ks->scancode = static_cast<SDL_Scancode>(k);
+                ks->sym = (SDL_Keycode)l;
+                ks->unused = m;
+                ks->mod = (Uint16)n;
 
                 keyevents.Add(ks);
             }

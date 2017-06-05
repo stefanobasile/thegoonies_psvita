@@ -56,6 +56,7 @@ extern bool ambient_light;
 extern int difficulty;
 extern int hiscore;
 extern int current_cycle;
+extern SDL_Window *screen_sfc;
 
 TheGooniesApp::TheGooniesApp()
 {
@@ -361,6 +362,7 @@ void TheGooniesApp::draw()
             break;
     }
 
+    show_fps = true;
     if (show_fps) {
         char tmp[80];
         sprintf(tmp, "video mem: %.4gmb - fps: %i", float(GLTile::get_memory_used()) / float(1024 * 1024), frames_per_sec);
@@ -369,7 +371,10 @@ void TheGooniesApp::draw()
 
     glDisable(GL_BLEND);
 
-    SDL_GL_SwapBuffers();
+// MIGRATION
+//    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(screen_sfc);
+//    printf(".");
 }
 
 

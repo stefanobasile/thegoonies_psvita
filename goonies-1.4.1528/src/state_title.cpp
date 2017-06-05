@@ -883,7 +883,7 @@ void TheGooniesApp::title_draw(void)
                                     if (m_title_waiting_keystroke && i == m_title_option_selected) {
                                         sprintf(tmp, "%s        -", menu3_options[i]);
                                     } else {
-                                        sprintf(tmp, "%s        [%s]", menu3_options[i], SDL_GetKeyName(SDLKey(m_keys_configuration[i])));
+                                        sprintf(tmp, "%s        [%s]", menu3_options[i], SDL_GetKeyName(SDL_Keycode(m_keys_configuration[i])));
                                     }
                                 } else {
                                     sprintf(tmp, menu3_options[i]);

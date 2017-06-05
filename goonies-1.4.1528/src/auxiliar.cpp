@@ -22,6 +22,8 @@
 #include "auxiliar.h"
 #include "List.h"
 
+#define SDL_HWSURFACE 0
+
 /*#ifndef _WIN32
 #ifndef HAVE_STRLWR
 judging by the ifndef, we don't need it on windows
@@ -79,58 +81,58 @@ void pause(unsigned int time)
 
 
 
-SDL_Surface *load_maskedimage(char *imagefile, char *maskfile, char *path)
-{
-    char name[256];
-
-    SDL_Surface *res;
-    SDL_Surface *tmp;
-    SDL_Surface *mask;
-
-    sprintf(name, "%s%s", path, imagefile);
-    tmp = IMG_Load(name);
-    sprintf(name, "%s%s", path, imagefile);
-    mask = IMG_Load(name);
-
-    if (tmp == 0 ||
-            mask == 0)
-        return false;
-
-    res = SDL_DisplayFormatAlpha(tmp);
-
-    /* Aplicar la máscara: */
-    {
-        int x, y;
-        Uint8 r, g, b, a;
-        Uint32 v;
-
-        for (y = 0;y < mask->h;y++)
-        {
-            for (x = 0;x < mask->w;x++) {
-                SDL_LockSurface(res);
-                v = getpixel(res, x, y);
-                SDL_UnlockSurface(res);
-                SDL_GetRGBA(v, res->format, &r, &g, &b, &a);
-                SDL_LockSurface(mask);
-                v = getpixel(mask, x, y);
-                SDL_UnlockSurface(mask);
-                if (v != 0)
-                    a = 255;
-                else
-                    a = 0;
-                v = SDL_MapRGBA(res->format, r, g, b, a);
-                SDL_LockSurface(res);
-                putpixel(res, x, y, v);
-                SDL_UnlockSurface(res);
-            } /* for */
-        } /* for */
-    }
-
-    SDL_FreeSurface(tmp);
-    SDL_FreeSurface(mask);
-
-    return res;
-} /* load_maskedimage */
+//SDL_Surface *load_maskedimage(char *imagefile, char *maskfile, char *path)
+//{
+//    char name[256];
+//
+//    SDL_Surface *res;
+//    SDL_Surface *tmp;
+//    SDL_Surface *mask;
+//
+//    sprintf(name, "%s%s", path, imagefile);
+//    tmp = IMG_Load(name);
+//    sprintf(name, "%s%s", path, imagefile);
+//    mask = IMG_Load(name);
+//
+//    if (tmp == 0 ||
+//            mask == 0)
+//        return false;
+//
+//    res = SDL_DisplayFormatAlpha(tmp);
+//
+//    /* Aplicar la máscara: */
+//    {
+//        int x, y;
+//        Uint8 r, g, b, a;
+//        Uint32 v;
+//
+//        for (y = 0;y < mask->h;y++)
+//        {
+//            for (x = 0;x < mask->w;x++) {
+//                SDL_LockSurface(res);
+//                v = getpixel(res, x, y);
+//                SDL_UnlockSurface(res);
+//                SDL_GetRGBA(v, res->format, &r, &g, &b, &a);
+//                SDL_LockSurface(mask);
+//                v = getpixel(mask, x, y);
+//                SDL_UnlockSurface(mask);
+//                if (v != 0)
+//                    a = 255;
+//                else
+//                    a = 0;
+//                v = SDL_MapRGBA(res->format, r, g, b, a);
+//                SDL_LockSurface(res);
+//                putpixel(res, x, y, v);
+//                SDL_UnlockSurface(res);
+//            } /* for */
+//        } /* for */
+//    }
+//
+//    SDL_FreeSurface(tmp);
+//    SDL_FreeSurface(mask);
+//
+//    return res;
+//} /* load_maskedimage */
 
 
 void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
@@ -1480,85 +1482,85 @@ void surface_blit_alpha(SDL_Surface *orig, SDL_Rect *o_r, SDL_Surface *dest, SDL
 } /* surface_blit_alpha */
 
 
-char get_key_ascii(int key)
-{
-    int i;
-    char keyascii[SDLK_LAST];
-
-    for (i = 0;i < SDLK_LAST;i++)
-        keyascii[i] = 0;
-
-    /* Fill in the blanks in keyascii */
-    keyascii[SDLK_BACKSPACE] = '\b';
-    keyascii[SDLK_TAB] = '\t';
-    keyascii[SDLK_RETURN] = '\n';
-    keyascii[SDLK_SPACE] = ' ';
-    keyascii[SDLK_EXCLAIM] = '!';
-    keyascii[SDLK_QUOTEDBL] = '\"';
-    keyascii[SDLK_HASH] = '#';
-    keyascii[SDLK_DOLLAR] = '$';
-    keyascii[SDLK_AMPERSAND] = '&';
-    keyascii[SDLK_QUOTE] = '\'';
-    keyascii[SDLK_LEFTPAREN] = '(';
-    keyascii[SDLK_RIGHTPAREN] = ')';
-    keyascii[SDLK_ASTERISK] = '*';
-    keyascii[SDLK_PLUS] = '+';
-    keyascii[SDLK_COMMA] = ',';
-    keyascii[SDLK_MINUS] = '-';
-    keyascii[SDLK_PERIOD] = '.';
-    keyascii[SDLK_SLASH] = '/';
-    keyascii[SDLK_0] = '0';
-    keyascii[SDLK_1] = '1';
-    keyascii[SDLK_2] = '2';
-    keyascii[SDLK_3] = '3';
-    keyascii[SDLK_4] = '4';
-    keyascii[SDLK_5] = '5';
-    keyascii[SDLK_6] = '6';
-    keyascii[SDLK_7] = '7';
-    keyascii[SDLK_8] = '8';
-    keyascii[SDLK_9] = '9';
-    keyascii[SDLK_COLON] = ':';
-    keyascii[SDLK_SEMICOLON] = ';';
-    keyascii[SDLK_LESS] = '<';
-    keyascii[SDLK_EQUALS] = '=';
-    keyascii[SDLK_GREATER] = '>';
-    keyascii[SDLK_QUESTION] = '?';
-    keyascii[SDLK_AT] = '@';
-    keyascii[SDLK_LEFTBRACKET] = '[';
-    keyascii[SDLK_BACKSLASH] = '\\';
-    keyascii[SDLK_RIGHTBRACKET] = ']';
-    keyascii[SDLK_CARET] = '^';
-    keyascii[SDLK_UNDERSCORE] = '_';
-    keyascii[SDLK_BACKQUOTE] = '`';
-    keyascii[SDLK_a] = 'a';
-    keyascii[SDLK_b] = 'b';
-    keyascii[SDLK_c] = 'c';
-    keyascii[SDLK_d] = 'd';
-    keyascii[SDLK_e] = 'e';
-    keyascii[SDLK_f] = 'f';
-    keyascii[SDLK_g] = 'g';
-    keyascii[SDLK_h] = 'h';
-    keyascii[SDLK_i] = 'i';
-    keyascii[SDLK_j] = 'j';
-    keyascii[SDLK_k] = 'k';
-    keyascii[SDLK_l] = 'l';
-    keyascii[SDLK_m] = 'm';
-    keyascii[SDLK_n] = 'n';
-    keyascii[SDLK_o] = 'o';
-    keyascii[SDLK_p] = 'p';
-    keyascii[SDLK_q] = 'q';
-    keyascii[SDLK_r] = 'r';
-    keyascii[SDLK_s] = 's';
-    keyascii[SDLK_t] = 't';
-    keyascii[SDLK_u] = 'u';
-    keyascii[SDLK_v] = 'v';
-    keyascii[SDLK_w] = 'w';
-    keyascii[SDLK_x] = 'x';
-    keyascii[SDLK_y] = 'y';
-    keyascii[SDLK_z] = 'z';
-
-    return keyascii[key];
-} /* get_key_ascii */
+//char get_key_ascii(int key)
+//{
+//    int i;
+//    char keyascii[SDLK_LAST];
+//
+//    for (i = 0;i < SDLK_LAST;i++)
+//        keyascii[i] = 0;
+//
+//    /* Fill in the blanks in keyascii */
+//    keyascii[SDLK_BACKSPACE] = '\b';
+//    keyascii[SDLK_TAB] = '\t';
+//    keyascii[SDLK_RETURN] = '\n';
+//    keyascii[SDLK_SPACE] = ' ';
+//    keyascii[SDLK_EXCLAIM] = '!';
+//    keyascii[SDLK_QUOTEDBL] = '\"';
+//    keyascii[SDLK_HASH] = '#';
+//    keyascii[SDLK_DOLLAR] = '$';
+//    keyascii[SDLK_AMPERSAND] = '&';
+//    keyascii[SDLK_QUOTE] = '\'';
+//    keyascii[SDLK_LEFTPAREN] = '(';
+//    keyascii[SDLK_RIGHTPAREN] = ')';
+//    keyascii[SDLK_ASTERISK] = '*';
+//    keyascii[SDLK_PLUS] = '+';
+//    keyascii[SDLK_COMMA] = ',';
+//    keyascii[SDLK_MINUS] = '-';
+//    keyascii[SDLK_PERIOD] = '.';
+//    keyascii[SDLK_SLASH] = '/';
+//    keyascii[SDLK_0] = '0';
+//    keyascii[SDLK_1] = '1';
+//    keyascii[SDLK_2] = '2';
+//    keyascii[SDLK_3] = '3';
+//    keyascii[SDLK_4] = '4';
+//    keyascii[SDLK_5] = '5';
+//    keyascii[SDLK_6] = '6';
+//    keyascii[SDLK_7] = '7';
+//    keyascii[SDLK_8] = '8';
+//    keyascii[SDLK_9] = '9';
+//    keyascii[SDLK_COLON] = ':';
+//    keyascii[SDLK_SEMICOLON] = ';';
+//    keyascii[SDLK_LESS] = '<';
+//    keyascii[SDLK_EQUALS] = '=';
+//    keyascii[SDLK_GREATER] = '>';
+//    keyascii[SDLK_QUESTION] = '?';
+//    keyascii[SDLK_AT] = '@';
+//    keyascii[SDLK_LEFTBRACKET] = '[';
+//    keyascii[SDLK_BACKSLASH] = '\\';
+//    keyascii[SDLK_RIGHTBRACKET] = ']';
+//    keyascii[SDLK_CARET] = '^';
+//    keyascii[SDLK_UNDERSCORE] = '_';
+//    keyascii[SDLK_BACKQUOTE] = '`';
+//    keyascii[SDLK_a] = 'a';
+//    keyascii[SDLK_b] = 'b';
+//    keyascii[SDLK_c] = 'c';
+//    keyascii[SDLK_d] = 'd';
+//    keyascii[SDLK_e] = 'e';
+//    keyascii[SDLK_f] = 'f';
+//    keyascii[SDLK_g] = 'g';
+//    keyascii[SDLK_h] = 'h';
+//    keyascii[SDLK_i] = 'i';
+//    keyascii[SDLK_j] = 'j';
+//    keyascii[SDLK_k] = 'k';
+//    keyascii[SDLK_l] = 'l';
+//    keyascii[SDLK_m] = 'm';
+//    keyascii[SDLK_n] = 'n';
+//    keyascii[SDLK_o] = 'o';
+//    keyascii[SDLK_p] = 'p';
+//    keyascii[SDLK_q] = 'q';
+//    keyascii[SDLK_r] = 'r';
+//    keyascii[SDLK_s] = 's';
+//    keyascii[SDLK_t] = 't';
+//    keyascii[SDLK_u] = 'u';
+//    keyascii[SDLK_v] = 'v';
+//    keyascii[SDLK_w] = 'w';
+//    keyascii[SDLK_x] = 'x';
+//    keyascii[SDLK_y] = 'y';
+//    keyascii[SDLK_z] = 'z';
+//
+//    return keyascii[key];
+//} /* get_key_ascii */
 
 
 bool save_float(FILE *fp, float f)

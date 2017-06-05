@@ -71,7 +71,7 @@ void surface_bicolor(SDL_Surface *surface, float factor, int r1, int g1, int b1,
 void surface_fader_mask(SDL_Surface *surface, SDL_Surface *mask, float r_factor, float g_factor, float b_factor, float a_factor, SDL_Rect *r);
 
 
-SDL_Surface *load_maskedimage(char *image, char *mask, char *path);
+//SDL_Surface *load_maskedimage(char *image, char *mask, char *path);
 
 void surface_automatic_alpha(SDL_Surface *sfc);
 void surface_bw(SDL_Surface *sfc, int threshold);
@@ -98,7 +98,7 @@ int get_text_width_bmp(unsigned char *text, SDL_Surface *font, int spacing);
 /* Blits orig into dest, and sets the alpha channel of all the blitted pixels to the right value: */
 void surface_blit_alpha(SDL_Surface *orig, SDL_Rect *o_r, SDL_Surface *dest, SDL_Rect *d_r);
 
-char get_key_ascii(int key);
+//char get_key_ascii(int key);
 
 /* functions to write/read from files: */
 

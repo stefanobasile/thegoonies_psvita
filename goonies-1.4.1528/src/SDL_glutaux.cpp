@@ -46,7 +46,9 @@ GLuint createTexture(SDL_Surface *sfc, float *tx, float *ty)
         *ty = (sfc->h) / float(szy);
 
         sfc2 = SDL_CreateRGBSurface(SDL_SWSURFACE, szx, szy, 32, RMASK, GMASK, BMASK, AMASK);
-        SDL_SetAlpha(sfc, 0, 0);
+// MIGRATION
+//        SDL_SetAlpha(sfc, 0, 0);
+        SDL_SetSurfaceAlphaMod(sfc, 0);
         SDL_BlitSurface(sfc, 0, sfc2, 0);
 
         glGenTextures(1, &tname);
@@ -84,7 +86,9 @@ GLuint createTextureClamp(SDL_Surface *sfc, float *tx, float *ty)
         *ty = (sfc->h) / float(szy);
 
         sfc2 = SDL_CreateRGBSurface(SDL_SWSURFACE, szx, szy, 32, RMASK, GMASK, BMASK, AMASK);
-        SDL_SetAlpha(sfc, 0, 0);
+// MIGRATION
+//        SDL_SetAlpha(sfc, 0, 0);
+        SDL_SetSurfaceAlphaMod(sfc, 0);
         SDL_BlitSurface(sfc, 0, sfc2, 0);
 
         glGenTextures(1, &tname);
@@ -122,7 +126,9 @@ GLuint createTextureSmooth(SDL_Surface *sfc, float *tx, float *ty)
         *ty = (sfc->h) / float(szy);
 
         sfc2 = SDL_CreateRGBSurface(SDL_SWSURFACE, szx, szy, 32, RMASK, GMASK, BMASK, AMASK);
-        SDL_SetAlpha(sfc, 0, 0);
+// MIGRATION
+//        SDL_SetAlpha(sfc, 0, 0);
+        SDL_SetSurfaceAlphaMod(sfc, 0);
         SDL_BlitSurface(sfc, 0, sfc2, 0);
 
         glGenTextures(1, &tname);
@@ -160,7 +166,9 @@ GLuint createTextureClampSmooth(SDL_Surface *sfc, float *tx, float *ty)
         *ty = (sfc->h) / float(szy);
 
         sfc2 = SDL_CreateRGBSurface(SDL_SWSURFACE, szx, szy, 32, RMASK, GMASK, BMASK, AMASK);
-        SDL_SetAlpha(sfc, 0, 0);
+// MIGRATION
+//        SDL_SetAlpha(sfc, 0, 0);
+        SDL_SetSurfaceAlphaMod(sfc, 0);
         SDL_BlitSurface(sfc, 0, sfc2, 0);
 
         glGenTextures(1, &tname);

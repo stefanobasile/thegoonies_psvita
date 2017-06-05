@@ -55,7 +55,8 @@ bool screen_shake = false;
 bool water_reflection = false;
 bool ambient_light = false;
 
-SDL_Surface *screen_sfc = 0;
+SDL_Window *screen_sfc = 0;
+SDL_Renderer *screen_renderer = 0;
 int difficulty = 100;
 int score = 0;
 int hiscore = 0;
@@ -77,10 +78,20 @@ int current_cycle = 0;
 /*      AUXILIAR FUNCTION DEFINITION:       */
 
 
-SDL_Surface *toogle_video_mode(bool fullscreen)
+// MIGRATION
+//SDL_Surface *toogle_video_mode(bool fullscreen)
+SDL_Window *toogle_video_mode(bool fullscreen)
 {
-    SDL_Surface *sfc = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, COLOUR_DEPTH, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
-    SDL_WM_SetCaption(application_name, 0);
+//    SDL_Surface *sfc = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, COLOUR_DEPTH, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
+//    SDL_WM_SetCaption(application_name, 0);
+    SDL_Window *window = SDL_CreateWindow(application_name,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SCREEN_X,
+                                          SCREEN_Y,
+                                          /*SDL_WINDOW_FULLSCREEN |*/ SDL_WINDOW_OPENGL);
+    screen_renderer = SDL_CreateRenderer(window, -1, 0);
+                                            
     SDL_ShowCursor(SDL_DISABLE);
     GLTile::reload_textures();
 
@@ -88,15 +99,17 @@ SDL_Surface *toogle_video_mode(bool fullscreen)
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    return sfc;
+    return window;
 } /* toogle_video_mode */
 
 
-SDL_Surface *initialization(int flags)
+// MIGRATION
+//SDL_Surface *initialization(int flags)
+SDL_Window *initialization(int flags)
 {
-    const SDL_VideoInfo* info = 0;
+//    const SDL_VideoInfo* info = 0;
     int bpp = 0;
-    SDL_Surface *screen;
+//    SDL_Surface *screen;
 
     rg = new TRanrotBGenerator(0);
 
@@ -115,23 +128,25 @@ SDL_Surface *initialization(int flags)
 #ifdef __DEBUG_MESSAGES
     output_debug_message("SDL initialized\n");
 #endif
-
-    info = SDL_GetVideoInfo();
-
-    if (!info) {
-#ifdef __DEBUG_MESSAGES
-        output_debug_message("Video query failed: %s\n", SDL_GetError());
-#endif
-
-        return 0;
-    } /* if */
-
-    if (fullscreen) {
-        bpp = COLOUR_DEPTH;
-    } else {
-        bpp = info->vfmt->BitsPerPixel;
-    } /* if */
-
+// MIGRATION
+//
+//    info = SDL_GetVideoInfo();
+//
+//    if (!info) {
+//#ifdef __DEBUG_MESSAGES
+//        output_debug_message("Video query failed: %s\n", SDL_GetError());
+//#endif
+//
+//        return 0;
+//    } /* if */
+//
+// MIGRATION
+//    if (fullscreen) {
+//        bpp = COLOUR_DEPTH;
+//    } else {
+//        bpp = info->vfmt->BitsPerPixel;
+//    } /* if */
+      bpp = COLOUR_DEPTH;
 #ifdef __DEBUG_MESSAGES
     output_debug_message("Setting OpenGL attributes\n");
 #endif
@@ -151,17 +166,25 @@ SDL_Surface *initialization(int flags)
     output_debug_message("Initializing video mode\n");
 #endif
 
-    flags = SDL_OPENGL | flags;
+// MIGRATION
+//    flags = SDL_OPENGL | flags;
 
-    // check for openGL support
-    if (!SDL_VideoModeOK(SCREEN_X, SCREEN_Y, bpp, flags)) {
-        // no support; print message and abort
-        printf("Hmm, your system doesn't support OpenGL...\n");
-        return 0;
-    }
+//
+//    // check for openGL support
+//    if (!SDL_VideoModeOK(SCREEN_X, SCREEN_Y, bpp, flags)) {
+//        // no support; print message and abort
+//        printf("Hmm, your system doesn't support OpenGL...\n");
+//        return 0;
+//    }
 
-    screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, bpp, flags);
-    if (screen == 0) {
+//    screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, bpp, flags);
+    SDL_Window *window = SDL_CreateWindow(application_name,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SCREEN_X,
+                                          SCREEN_Y,
+                                          /*SDL_WINDOW_FULLSCREEN | */SDL_WINDOW_OPENGL);
+    if (window == 0) {
 #ifdef __DEBUG_MESSAGES
         output_debug_message("Video mode set failed: %s\n", SDL_GetError());
 #endif
@@ -173,7 +196,7 @@ SDL_Surface *initialization(int flags)
     output_debug_message("Video mode initialized\n");
 #endif
 
-    SDL_WM_SetCaption(application_name, 0);
+//    SDL_WM_SetCaption(application_name, 0);
     SDL_ShowCursor(SDL_DISABLE);
 
     if (sound) {
@@ -190,9 +213,9 @@ SDL_Surface *initialization(int flags)
 
     } /* if */
 
-    SDL_EnableUNICODE(1);
+//    SDL_EnableUNICODE(1);
 
-    return screen;
+    return window;
 } /* initialization */
 
 
@@ -209,7 +232,8 @@ void finalization()
     // FIXME: apparently, sometimes windows' resolution doesn't get restored properly
     // a stupid workaround is to switch back to windowed mode before exit
     if (fullscreen) {
-        SDL_SetVideoMode(SCREEN_X, SCREEN_Y, COLOUR_DEPTH, SDL_OPENGL | 0);
+// MIGRATION
+//        SDL_SetVideoMode(SCREEN_X, SCREEN_Y, COLOUR_DEPTH, SDL_OPENGL | 0);
     }
     if (sound) {
         Sound_release();
@@ -247,9 +271,10 @@ int main(int argc, char** argv) {
     output_debug_message("Application started\n");
 #endif
 
-    screen_sfc = initialization((fullscreen ? SDL_FULLSCREEN : 0));
-    if (screen_sfc == 0)
-        return 0;
+//    screen_sfc = initialization((fullscreen ? SDL_FULLSCREEN : 0));
+//    screen_sfc = initialization(0);
+//    if (screen_sfc == 0)
+//        return 0;
 
     k = new KEYBOARDSTATE();
 
@@ -270,6 +295,7 @@ int main(int argc, char** argv) {
                     /* NICETOHAVE: a keyboard event handler that deals with key combos
                        and sets certain status flags to deal with quit/fullscreen nicely */
                 case SDL_KEYDOWN:
+                    printf("SDK_KEYDOWN\n");
 #ifdef __APPLE__
                     // different quit shortcut on OSX: apple+Q
                     if (event.key.keysym.sym == SDLK_q) {
@@ -292,6 +318,7 @@ int main(int argc, char** argv) {
 #endif
                     // default quit: F12
                     if (event.key.keysym.sym == SDLK_F12) {
+                        printf("F12 pressed\n");
                         quit = true;
                     } /* if */
 
@@ -308,7 +335,9 @@ int main(int argc, char** argv) {
 #else
                     if (event.key.keysym.sym == SDLK_RETURN)
                     {
-                        SDLMod modifiers;
+// MIGRATION
+//                        SDLMod modifiers;
+                        SDL_Keymod modifiers;
                         modifiers = SDL_GetModState();
                         if ((modifiers&KMOD_ALT) != 0) {
                             fullscreen = (fullscreen ? false : true);
@@ -319,7 +348,9 @@ int main(int argc, char** argv) {
 #endif
                     if (event.key.keysym.sym == SDLK_f)
                     {
-                        SDLMod modifiers;
+// MIGRATION
+//                        SDLMod modifiers;
+                        SDL_Keymod modifiers;
 
                         modifiers = SDL_GetModState();
 
@@ -333,8 +364,9 @@ int main(int argc, char** argv) {
                     } /* if */
 
                     /* Keyboard event */
-                    SDL_keysym *ks;
-                    ks = new SDL_keysym();
+// MIGRARTION
+                    SDL_Keysym *ks;
+                    ks = new SDL_Keysym();
                     *ks = event.key.keysym;
                     k->keyevents.Add(ks);
 
@@ -377,6 +409,7 @@ int main(int argc, char** argv) {
 
         /* Redraw */
         if (need_to_redraw) {
+//            printf("*");
             GLTile::recheck_textures();
             game->draw();
             need_to_redraw = false;

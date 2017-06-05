@@ -28,7 +28,7 @@ class KEYBOARDSTATE
         unsigned char *old_keyboard;
         unsigned char *keyboard;
 		int *time_pressed;					// amount of cycles that the key has been pressed
-        List<SDL_keysym> keyevents;
+        List<SDL_Keysym> keyevents;
 };
 
 #endif
