@@ -69,10 +69,10 @@ STRIP = strip
 all: $(EXE)
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@
 
 $(EXE): $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 	@$(STRIP) $@
 	@$(ECHO) " o If there are no errors, the game compiled succesfully"
 
