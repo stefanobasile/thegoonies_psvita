@@ -56,9 +56,9 @@ OBJS = \
 	$(SRC)/Symbol.o			$(SRC)/TheGooniesApp.o \
 	$(SRC)/TheGoonies.o		$(SRC)/Vector.o
 
-CC = gcc
-CFLAGS = -g3 -O3 -Wno-write-strings `sdl-config --cflags` -I/usr/X11R6/include
-LDFLAGS = `sdl-config --libs` -L/usr/X11R6/lib/ -lSDL_image -lSDL_mixer -lGL -lGLU
+CC = g++
+CFLAGS = -g3 -O3 -Wno-write-strings `sdl2-config --cflags` -I/usr/X11R6/include
+LDFLAGS = `sdl2-config --libs` -L/usr/X11R6/lib/ -lSDL2_image -lSDL2_mixer -lGL -lGLU
 RM = rm -f
 CP = cp -r
 MD = mkdir -p
