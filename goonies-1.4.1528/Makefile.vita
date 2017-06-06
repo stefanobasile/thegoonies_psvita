@@ -1,0 +1,137 @@
+TITLE_ID = VITA2DTST
+TARGET   = gooniesvita
+PROJECT_TITLE := gooniesvita
+
+SRC = src
+
+OBJS	= \
+	$(SRC)/2DCMC.o \
+	$(SRC)/auxiliar.o \
+	$(SRC)/debug.o \
+	$(SRC)/font_extractor.o \
+	$(SRC)/geometrics.o \
+	$(SRC)/GinterfaceBrowser.o \
+	$(SRC)/GinterfaceButton.o \
+	$(SRC)/GinterfaceConfirmation.o \
+	$(SRC)/Ginterface.o \
+	$(SRC)/GinterfaceMessage.o \
+	$(SRC)/GinterfaceSButton.o \
+	$(SRC)/GinterfaceText.o \
+	$(SRC)/GinterfaceTextInput.o \
+	$(SRC)/GLTile.o \
+	$(SRC)/GLTManager.o \
+	$(SRC)/GMap.o \
+	$(SRC)/GMapLayer.o \
+	$(SRC)/GO_bat.o \
+	$(SRC)/GO_bigrock.o \
+	$(SRC)/GObject.o \
+	$(SRC)/GObjectCreator.o \
+	$(SRC)/GO_bone.o \
+	$(SRC)/GO_bridge.o \
+	$(SRC)/GO_bullet.o \
+	$(SRC)/GO_cagedoor.o \
+	$(SRC)/GO_character.o \
+	$(SRC)/GO_closingwall.o \
+	$(SRC)/GO_coin.o \
+	$(SRC)/GO_drop.o \
+	$(SRC)/GO_dropgenerator.o \
+	$(SRC)/GO_enemy.o \
+	$(SRC)/GO_entrydoor.o \
+	$(SRC)/GO_exitdoor.o \
+	$(SRC)/GO_fallingrock.o \
+	$(SRC)/GO_fallingwater.o \
+	$(SRC)/GO_flame.o \
+	$(SRC)/GO_fratelli.o \
+	$(SRC)/GO_ghost.o \
+	$(SRC)/GO_item.o \
+	$(SRC)/GO_jumpingskull.o \
+	$(SRC)/GO_key.o \
+	$(SRC)/GO_lava.o \
+	$(SRC)/GO_musicalnote.o \
+	$(SRC)/GooniesScript.o \
+	$(SRC)/GO_pipe_water.o \
+	$(SRC)/GO_rope.o \
+	$(SRC)/GO_skeleton.o \
+	$(SRC)/GO_skull.o \
+	$(SRC)/GO_skulldoor.o \
+	$(SRC)/GO_trickyskull.o \
+	$(SRC)/GO_water.o \
+	$(SRC)/GO_wateropening.o \
+	$(SRC)/GO_watersplash.o \
+	$(SRC)/keyboardstate.o \
+	$(SRC)/Level.o \
+	$(SRC)/LevelPack.o \
+	$(SRC)/main.o \
+	$(SRC)/MusicManager.o \
+	$(SRC)/PlacedGLTile.o \
+	$(SRC)/ranrotb.o \
+	$(SRC)/SDL_glutaux.o \
+	$(SRC)/SFXManager.o \
+	$(SRC)/sound.o \
+	$(SRC)/SoundManager.o \
+	$(SRC)/state_credits.o \
+	$(SRC)/state_editor.o \
+	$(SRC)/state_endsequence.o \
+	$(SRC)/state_game.o \
+	$(SRC)/state_gameover.o \
+	$(SRC)/state_gamestart.o \
+	$(SRC)/state_howtoplay.o \
+	$(SRC)/state_interlevel.o \
+	$(SRC)/state_konami.o \
+	$(SRC)/state_mapeditor.o \
+	$(SRC)/state_msx.o \
+	$(SRC)/state_splash.o \
+	$(SRC)/state_titleanimation.o \
+	$(SRC)/state_title.o \
+	$(SRC)/Symbol.o \
+	$(SRC)/TheGooniesApp.o \
+	$(SRC)/TheGoonies.o \
+	$(SRC)/Vector.o
+
+LIBS = -lvita2d -lSceDisplay_stub -lSceGxm_stub \
+	-lSceSysmodule_stub -lSceCtrl_stub -lScePgf_stub -lScePvf_stub \
+	-lSceCommonDialog_stub -lSceTouch_stub -lfreetype -lpng -ljpeg -lz -lm -lc \
+    -lSceAppMgr_stub -lSceAppUtil_stub \
+    -lSceAudio_stub -lSceAudiodec_stub -lSDL2 -lSDL2_image -lSDL2_mixer
+
+
+PREFIX  = arm-vita-eabi
+CC      = $(PREFIX)-g++
+CXX      = $(PREFIX)-g++
+CFLAGS  = -Wl,-q -Wall -fno-lto -std=c++11
+CPPFLAGS  = -Wl,-q -Wall -fno-lto -std=c++11
+ASFLAGS = $(CFLAGS)
+
+all: $(TARGET).vpk
+
+%.vpk: eboot.bin
+	vita-mksfoex -d PARENTAL_LEVEL=1 -s APP_VER=01.00 -s TITLE_ID=$(TITLE_ID) "$(PROJECT_TITLE)" param.sfo
+	vita-pack-vpk -s param.sfo -b eboot.bin \
+		--add sce_sys/icon0.png=sce_sys/icon0.png \
+		--add sce_sys/livearea/contents/startup.png=sce_sys/livearea/contents/startup.png \
+		--add sce_sys/livearea/contents/template.xml=sce_sys/livearea/contents/template.xml \
+    gooniesvita.vpk
+
+eboot.bin: $(TARGET).velf
+	vita-make-fself -s $< $@
+
+%.velf: %.elf
+	vita-elf-create $< $@
+
+$(TARGET).elf: $(OBJS)
+	$(CXX) $(CPPFLAGS) $(LIBS) $^ -o $@ 
+
+%.o: %.png
+	$(PREFIX)-ld -r -b binary -o $@ $^
+
+clean:
+	@rm -rf $(TARGET).vpk $(TARGET).velf $(TARGET).elf $(OBJS) \
+		eboot.bin param.sfo
+
+vpksend: $(TARGET).vpk
+	curl -T $(TARGET).vpk ftp://$(PSVITAIP):1337/ux0:/
+	@echo "Sent."
+
+send: eboot.bin
+	curl -T eboot.bin ftp://$(PSVITAIP):1337/ux0:/app/$(TITLE_ID)/
+	@echo "Sent."
