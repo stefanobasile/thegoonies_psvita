@@ -151,7 +151,8 @@ GLTile::GLTile(char *fname, int ax, int ay, int adx, int ady)
             r.h = ady;
 // MIGRATION
 //            SDL_SetAlpha(sfc, 0, 0);
-            SDL_SetSurfaceAlphaMod(sfc, 0);
+            //TEMPORARY FIX
+//SDL_SetSurfaceAlphaMod(sfc, 0);
             SDL_BlitSurface(sfc, &r, sfc2, 0);
             set(sfc2);
             SDL_FreeSurface(sfc);
@@ -200,7 +201,8 @@ GLTile::GLTile(SDL_Surface *sfc, int ax, int ay, int adx, int ady)
 
 // MIGRATION
 //        SDL_SetAlpha(sfc, 0, 0);
-        SDL_SetSurfaceAlphaMod(sfc, 0);
+        //TEMPORARY FIX
+//SDL_SetSurfaceAlphaMod(sfc, 0);
 
         SDL_BlitSurface(sfc, &r, sfc2, 0);
         set
@@ -272,7 +274,8 @@ GLTile::GLTile(SDL_Surface **sfcs, int *start_x, int *start_y, int nsfcs, int ad
                 tile[k] = SDL_CreateRGBSurface(SDL_SWSURFACE, sfcs[i]->w, sfcs[i]->h, 32, RMASK, GMASK, BMASK, AMASK);
 // MIGRATION
 //                SDL_SetAlpha(sfcs[i], 0, 0);
-                SDL_SetSurfaceAlphaMod(sfcs[i], 0);
+                //TEMPORARY FIX
+//SDL_SetSurfaceAlphaMod(sfcs[i], 0);
                 SDL_BlitSurface(sfcs[i], 0, tile[k], 0);
 
                 x[k] = start_x[i];
@@ -346,7 +349,8 @@ GLTile::GLTile(int ax, int ay, int adx, int ady)
         surface_shifter(sfc, 0, 0, 0, 255, 0);
 // MIGRATION
 //        SDL_SetAlpha(sfc, 0, 0);
-        SDL_SetSurfaceAlphaMod(sfc, 0);
+        //TEMPORARY FIX
+//SDL_SetSurfaceAlphaMod(sfc, 0);
 
         r1.x = 0;
         r1.w = adx;
@@ -443,7 +447,8 @@ void GLTile::set
 
 // MIGRATION
 //        SDL_SetAlpha(sfc, 0, 0);
-        SDL_SetSurfaceAlphaMod(sfc, 0);
+        //TEMPORARY FIX
+//SDL_SetSurfaceAlphaMod(sfc, 0);
         SDL_BlitSurface(tile[0], 0, sfc, 0);
         SDL_FreeSurface(tile[0]);
         tile[0] = sfc;
@@ -601,7 +606,8 @@ void GLTile::set_smooth(char *fname)
 
 // MIGRATION
 //        SDL_SetAlpha(sfc, 0, 0);
-        SDL_SetSurfaceAlphaMod(sfc, 0);
+        //TEMPORARY FIX
+//SDL_SetSurfaceAlphaMod(sfc, 0);
         SDL_BlitSurface(tile[0], 0, sfc, 0);
         SDL_FreeSurface(tile[0]);
         tile[0] = sfc;
@@ -710,7 +716,8 @@ void GLTile::set_clamp(char *fname)
 
 // MIGRATION
 //        SDL_SetAlpha(sfc, 0, 0);
-        SDL_SetSurfaceAlphaMod(sfc, 0);
+        //TEMPORARY FIX
+//SDL_SetSurfaceAlphaMod(sfc, 0);
         SDL_BlitSurface(tile[0], 0, sfc, 0);
         SDL_FreeSurface(tile[0]);
         tile[0] = sfc;
@@ -1248,7 +1255,8 @@ void GLTile::optimize(int o_dx, int o_dy)
             k = 0;
 // MIGRATION
 //            SDL_SetAlpha(sfc, 0, 0);
-            SDL_SetSurfaceAlphaMod(sfc, 0);
+            //TEMPORARY FIX
+//SDL_SetSurfaceAlphaMod(sfc, 0);
             for (i = 0;i < grid_dy;i++) {
                 for (j = 0;j < grid_dx;j++) {
                     if (!empty[j + i*grid_dx]) {
