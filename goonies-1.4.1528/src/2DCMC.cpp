@@ -8,9 +8,10 @@
 
 #include "math.h"
 
-#include "GL/gl.h"
-#include "GL/glu.h"
-#include "SDL.h"
+//#include "GL/gl.h"
+#include <SDL2/SDL_opengl.h>
+//#include "GL/glu.h"
+#include <SDL2/SDL.h>
 
 #include "stdlib.h"
 #include "auxiliar.h"
