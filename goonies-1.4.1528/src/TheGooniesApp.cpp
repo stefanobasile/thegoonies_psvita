@@ -114,13 +114,13 @@ TheGooniesApp::TheGooniesApp()
     m_MusicM = new MusicManager();
 
     // default keyboard config
-    m_keys_configuration[GKEY_UP] = SDLK_UP;
-    m_keys_configuration[GKEY_RIGHT] = SDLK_RIGHT;
-    m_keys_configuration[GKEY_DOWN] = SDLK_DOWN;
-    m_keys_configuration[GKEY_LEFT] = SDLK_LEFT;
-    m_keys_configuration[GKEY_FIRE] = SDLK_SPACE;
-    m_keys_configuration[GKEY_PAUSE] = SDLK_F1;
-    m_keys_configuration[GKEY_QUIT] = SDLK_ESCAPE;
+    m_keys_configuration[GKEY_UP] = SDL_SCANCODE_UP;
+    m_keys_configuration[GKEY_RIGHT] = SDL_SCANCODE_RIGHT;
+    m_keys_configuration[GKEY_DOWN] = SDL_SCANCODE_DOWN;
+    m_keys_configuration[GKEY_LEFT] = SDL_SCANCODE_LEFT;
+    m_keys_configuration[GKEY_FIRE] = SDL_SCANCODE_SPACE;
+    m_keys_configuration[GKEY_PAUSE] = SDL_SCANCODE_F1;
+    m_keys_configuration[GKEY_QUIT] = SDL_SCANCODE_ESCAPE;
 
     m_sfx_volume = MIX_MAX_VOLUME;
     m_music_volume = 96;
@@ -457,10 +457,11 @@ void TheGooniesApp::load_configuration(void)
         // difficulty
         fscanf(fp, "%i", &difficulty);
 
-        // keyboard
-        for (i = 0; i < 7; i++) {
-            fscanf(fp, "%i", &(m_keys_configuration[i]));
-        }
+// MIGRATION FIX
+//        // keyboard
+//        for (i = 0; i < 7; i++) {
+//            fscanf(fp, "%i", &(m_keys_configuration[i]));
+//        }
 		// screen shake
 		fscanf(fp, "%s", tmp_s);
 		screen_shake = (strcmp(tmp_s, "screen_shake_on") ? false : true);
