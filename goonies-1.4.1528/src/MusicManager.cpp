@@ -6,13 +6,14 @@
 #ifdef _WIN32
 #include "windows.h"
 #else
-#include "dirent.h"
+//#include "dirent.h"
 #endif
 
-#include "GL/gl.h"
-#include "GL/glu.h"
-#include "SDL.h"
-#include "SDL_mixer.h"
+//#include "GL/gl.h"
+//#include "GL/glu.h"
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "stdlib.h"
 #include "string.h"

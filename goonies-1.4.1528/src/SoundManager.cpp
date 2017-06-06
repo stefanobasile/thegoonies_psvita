@@ -6,13 +6,14 @@
 #ifdef _WIN32
 #include "windows.h"
 #else
-#include "dirent.h"
+//#include "dirent.h"
 #endif
 
-#include "GL/gl.h"
-#include "GL/glu.h"
-#include "SDL.h"
-#include "SDL_mixer.h"
+//#include "GL/gl.h"
+//#include "GL/glu.h"
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "stdlib.h"
 #include "string.h"
@@ -20,6 +21,7 @@
 
 #include "Symbol.h"
 #include "sound.h"
+#include "soundlist.h"
 
 #include "SoundManager.h"
 
@@ -104,29 +106,29 @@ Mix_Chunk *SoundManager::get
 } /* SoundManager::get */
 
 
-// helper function for the cache
-// filter the dir specified for only ogg/wav/mp3
-#ifndef _WIN32
-#ifdef __APPLE__
-int filter_sfx(struct dirent *de)
-{
-#else
-int filter_sfx(const struct dirent *de)
-{
-#endif //__APPLE__
-    if (
-        strcmp(".ogg", de->d_name + strlen(de->d_name) - 4) == 0 ||
-        strcmp(".wav", de->d_name + strlen(de->d_name) - 4) == 0 ||
-        strcmp(".mp3", de->d_name + strlen(de->d_name) - 4) == 0
-    )
-    {
-        return (1);
-    } else
-    {
-        return (0);
-    }
-}
-#endif
+//// helper function for the cache
+//// filter the dir specified for only ogg/wav/mp3
+//#ifndef _WIN32
+//#ifdef __APPLE__
+//int filter_sfx(struct dirent *de)
+//{
+//#else
+//int filter_sfx(const struct dirent *de)
+//{
+//#endif //__APPLE__
+//    if (
+//        strcmp(".ogg", de->d_name + strlen(de->d_name) - 4) == 0 ||
+//        strcmp(".wav", de->d_name + strlen(de->d_name) - 4) == 0 ||
+//        strcmp(".mp3", de->d_name + strlen(de->d_name) - 4) == 0
+//    )
+//    {
+//        return (1);
+//    } else
+//    {
+//        return (0);
+//    }
+//}
+//#endif
 
 // helper function for the cache;
 // remove file extensions, since Santi's Sound.cpp doesn't like 'em
@@ -190,20 +192,24 @@ void SoundManager::cache(char *localpath)
         }
     }
 #else
-    struct dirent **namelist;
+//    struct dirent **namelist;
     char tmp[512];
     int i, n;
 
     // get alpha sorted list of sfx names from "path"
-    if ((n = scandir(path, &namelist, filter_sfx, alphasort)) > 0) {
-        for (i = 0; i < n; i++) {
-            filename = remove_extension(namelist[i]->d_name);
-            snprintf(tmp, 512, "%s/%s", localpath, filename);
+//    if ((n = scandir(path, &namelist, filter_sfx, alphasort)) > 0) {
+//        for (i = 0; i < n; i++) {
+//            filename = remove_extension(namelist[i]->d_name);
+    for (i = 0; soundlist[i] != NULL; i++)
+    {
+            filename = remove_extension((char*)soundlist[i]);
+//            snprintf(tmp, 512, "%s/%s", localpath, filename);
             get
-                (tmp);
-        }
-        free(namelist);
+                (filename);
     }
+//        }
+//        free(namelist);
+ //   }
 #endif
 }
 

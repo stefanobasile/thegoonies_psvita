@@ -11,11 +11,12 @@
 #include "stdlib.h"
 #include "string.h"
 
-#include "GL/gl.h"
-#include "GL/glu.h"
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_mixer.h"
+//#include "GL/gl.h"
+//#include "GL/glu.h"
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "List.h"
 

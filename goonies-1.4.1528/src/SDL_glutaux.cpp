@@ -6,10 +6,11 @@
 #include "windows.h"
 #endif
 
-#include <GL/gl.h>
-
-#include "SDL.h"
-#include "SDL_image.h"
+//#include "GL/gl.h"
+//#include "GL/glu.h"
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "stdio.h"
 #include "math.h"

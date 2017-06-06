@@ -25,6 +25,7 @@
 #include "GLTile.h"
 
 #include "GLTManager.h"
+#include "graphicsfiles.h"
 
 #include "debug.h"
 
@@ -290,25 +291,25 @@ GLTile *GLTManager::get_smooth(Symbol *name)
 
 
 
-// helper function for the cache
-// filter the dir specified for only ogg/wav/mp3
-#ifndef _WIN32
-#ifdef __APPLE__
-int filter_png(struct dirent *de)
-{
-#else
-int filter_png(const struct dirent *de)
-{
-#endif //__APPLE__
-    if (strcmp(".png", de->d_name + strlen(de->d_name) - 4) == 0)
-    {
-        return (1);
-    } else
-    {
-        return (0);
-    }
-}
-#endif
+//// helper function for the cache
+//// filter the dir specified for only ogg/wav/mp3
+//#ifndef _WIN32
+//#ifdef __APPLE__
+//int filter_png(struct dirent *de)
+//{
+//#else
+//int filter_png(const struct dirent *de)
+//{
+//#endif //__APPLE__
+//    if (strcmp(".png", de->d_name + strlen(de->d_name) - 4) == 0)
+//    {
+//        return (1);
+//    } else
+//    {
+//        return (0);
+//    }
+//}
+//#endif
 
 // helper function for the cache;
 // remove file extensions, since Santi's Sound.cpp doesn't like 'em
@@ -361,19 +362,24 @@ void GLTManager::cache(void)
         }
     }
 #else
-    struct dirent **namelist;
+//    struct dirent **namelist;
     char tmp[512];
     int i, n;
 
     // get alpha sorted list of png names from "path"
-    if ((n = scandir(path, &namelist, filter_png, alphasort)) > 0) {
-        for (i = 0; i < n; i++) {
-            filename = remove_extension(namelist[i]->d_name);
+//    if ((n = scandir(path, &namelist, filter_png, alphasort)) > 0) {
+//        for (i = 0; i < n; i++) {
+    for (i = 0; graphicsfiles[i] != NULL; i++)
+    {
+//            filename = remove_extension(namelist[i]->d_name);
+            filename = remove_extension((char*)graphicsfiles[i]);
             snprintf(tmp, 512, "%s", filename);
             get (tmp);
-        }
-        free(namelist);
+            i++;
     }
+//        }
+//        free(namelist);
+//    }
 #endif
 }
 

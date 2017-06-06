@@ -11,10 +11,11 @@
 #include "math.h"
 #include "string.h"
 
-#include "GL/gl.h"
-#include "GL/glu.h"
-#include "SDL.h"
-#include "SDL_mixer.h"
+//#include "GL/gl.h"
+//#include "GL/glu.h"
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "List.h"
 #include "Symbol.h"
@@ -41,6 +42,125 @@
 #include "LevelPack.h"
 
 #include "font_extractor.h"
+
+// opengl source from: ftp://oss.sgi.com/projects/ogl-sample/download/
+// implementation of gluPerspective and gluLookAt
+/*
+** Make m an identity matrix
+*/
+void __gluMakeIdentityd(GLdouble m[16])
+{
+    m[0+4*0] = 1; m[0+4*1] = 0; m[0+4*2] = 0; m[0+4*3] = 0;
+    m[1+4*0] = 0; m[1+4*1] = 1; m[1+4*2] = 0; m[1+4*3] = 0;
+    m[2+4*0] = 0; m[2+4*1] = 0; m[2+4*2] = 1; m[2+4*3] = 0;
+    m[3+4*0] = 0; m[3+4*1] = 0; m[3+4*2] = 0; m[3+4*3] = 1;
+}
+
+void __gluMakeIdentityf(GLfloat m[16])
+{
+    m[0+4*0] = 1; m[0+4*1] = 0; m[0+4*2] = 0; m[0+4*3] = 0;
+    m[1+4*0] = 0; m[1+4*1] = 1; m[1+4*2] = 0; m[1+4*3] = 0;
+    m[2+4*0] = 0; m[2+4*1] = 0; m[2+4*2] = 1; m[2+4*3] = 0;
+    m[3+4*0] = 0; m[3+4*1] = 0; m[3+4*2] = 0; m[3+4*3] = 1;
+}
+
+void GLAPI
+gluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
+{
+    glOrtho(left, right, bottom, top, -1, 1);
+}
+
+#define __glPi 3.14159265358979323846
+
+void GLAPI
+gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
+{
+    GLdouble m[4][4];
+    double sine, cotangent, deltaZ;
+    double radians = fovy / 2 * __glPi / 180;
+
+    deltaZ = zFar - zNear;
+    sine = sin(radians);
+    if ((deltaZ == 0) || (sine == 0) || (aspect == 0)) {
+    return;
+    }
+    cotangent = cos(radians) / sine;
+
+    __gluMakeIdentityd(&m[0][0]);
+    m[0][0] = cotangent / aspect;
+    m[1][1] = cotangent;
+    m[2][2] = -(zFar + zNear) / deltaZ;
+    m[2][3] = -1;
+    m[3][2] = -2 * zNear * zFar / deltaZ;
+    m[3][3] = 0;
+    glMultMatrixd(&m[0][0]);
+}
+
+static void normalize(float v[3])
+{
+    float r;
+
+    r = sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+    if (r == 0.0) return;
+
+    v[0] /= r;
+    v[1] /= r;
+    v[2] /= r;
+}
+
+static void cross(float v1[3], float v2[3], float result[3])
+{
+    result[0] = v1[1]*v2[2] - v1[2]*v2[1];
+    result[1] = v1[2]*v2[0] - v1[0]*v2[2];
+    result[2] = v1[0]*v2[1] - v1[1]*v2[0];
+}
+
+void GLAPI
+gluLookAt(GLdouble eyex, GLdouble eyey, GLdouble eyez, GLdouble centerx,
+      GLdouble centery, GLdouble centerz, GLdouble upx, GLdouble upy,
+      GLdouble upz)
+{
+    int i;
+    float forward[3], side[3], up[3];
+    GLfloat m[4][4];
+
+    forward[0] = centerx - eyex;
+    forward[1] = centery - eyey;
+    forward[2] = centerz - eyez;
+
+    up[0] = upx;
+    up[1] = upy;
+    up[2] = upz;
+
+    normalize(forward);
+
+    /* Side = forward x up */
+    cross(forward, up, side);
+    normalize(side);
+
+    /* Recompute up as: up = side x forward */
+    cross(side, forward, up);
+
+    __gluMakeIdentityf(&m[0][0]);
+    m[0][0] = side[0];
+    m[1][0] = side[1];
+    m[2][0] = side[2];
+
+    m[0][1] = up[0];
+    m[1][1] = up[1];
+    m[2][1] = up[2];
+
+    m[0][2] = -forward[0];
+    m[1][2] = -forward[1];
+    m[2][2] = -forward[2];
+
+    glMultMatrixf(&m[0][0]);
+    glTranslated(-eyex, -eyey, -eyez);
+}
+
+// end of opengl source
+
+
 
 /* fps counter: */
 extern int frames_per_sec;
@@ -265,6 +385,36 @@ bool TheGooniesApp::cycle(KEYBOARDSTATE *k)
 
     return true;
 }
+
+//void perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar )
+//{
+//    const GLdouble pi = 3.1415926535897932384626433832795;
+//    GLdouble fW, fH;
+//
+//    //fH = tan( (fovY / 2) / 180 * pi ) * zNear;
+//    fH = tan( fovY / 360 * pi ) * zNear;
+//    fW = fH * aspect;
+//
+//    glFrustum( -fW, fW, -fH, fH, zNear, zFar );
+//}
+//
+////Compat method: gluLookAt deprecated
+//void util_compat_gluLookAt(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat lookAtX, GLfloat lookAtY, GLfloat lookAtZ, GLfloat upX, GLfloat upY, GLfloat upZ) {
+//    Vector3f x, y, z;
+//    z = Vector3f(eyeX-lookAtX, eyeY-lookAtY, eyeZ-lookAtZ).normalize();
+//    y = Vector3f(upX, upY, upZ);
+//    x = y ^ z;
+//    y = z ^ x;
+//    x = x.normalize();
+//    y = y.normalize();
+//    // mat is given transposed so OpenGL can handle it.
+//    Matrix4x4 mat (new GLfloat[16]
+//                     {x.getX(), y.getX(),   z.getX(),   0,
+//                     x.getY(),  y.getY(),   z.getY(),   0,
+//                     x.getZ(),  y.getZ(),   z.getZ(),   0,
+//                     -eyeX,     -eyeY,      -eyeZ,      1});
+//    glMultMatrixf(mat.getComponents());
+//}
 
 void TheGooniesApp::draw()
 {
