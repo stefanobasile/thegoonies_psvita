@@ -202,10 +202,12 @@ void SoundManager::cache(char *localpath)
 //            filename = remove_extension(namelist[i]->d_name);
     for (i = 0; soundlist[i] != NULL; i++)
     {
-            filename = remove_extension((char*)soundlist[i]);
+//            char *temp_str = (char*)malloc(strlen(soundlist[i]));
+//            strcpy(temp_str, soundlist[i]);
+//            filename = remove_extension(temp_str);
 //            snprintf(tmp, 512, "%s/%s", localpath, filename);
-            get
-                (filename);
+            get((char*)soundlist[i]);
+//            free(temp_str);
     }
 //        }
 //        free(namelist);

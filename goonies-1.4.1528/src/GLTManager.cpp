@@ -372,8 +372,9 @@ void GLTManager::cache(void)
     for (i = 0; graphicsfiles[i] != NULL; i++)
     {
 //            filename = remove_extension(namelist[i]->d_name);
-            filename = remove_extension((char*)graphicsfiles[i]);
-            snprintf(tmp, 512, "%s", filename);
+//            filename = remove_extension((char*)graphicsfiles[i]);
+//            snprintf(tmp, 512, "%s", filename);
+            snprintf(tmp, 512, "%s", graphicsfiles[i]);
             get (tmp);
             i++;
     }
